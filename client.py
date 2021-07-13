@@ -25,21 +25,30 @@ class UiChatClient:
         self.window.geometry('400x500')
         
         self.chatFrame = Frame(self.window)
-        self.chatList = Listbox(self.chatFrame)
-
-        self.messageFrame = Frame(self.window)
-        self.messageEntry = Entry(self.messageFrame)
-        self.messageButton = Button(self.messageFrame, width=10, text='전송', command=self.sendMsg)
-
         self.chatFrame.pack(side='top', fill='both', expand=True)
+
+        self.xScrollbar = Scrollbar(self.chatFrame, orient=HORIZONTAL)
+        self.yScrollbar = Scrollbar(self.chatFrame)
+        self.xScrollbar.pack(side='bottom', fill='x')
+        self.yScrollbar.pack(side='right', fill='y')
+
+        self.chatList = Listbox(self.chatFrame, selectmode='extended', xscrollcommand=self.xScrollbar.set, yscrollcommand=self.yScrollbar.set)
+        self.chatList.pack(side='left', fill='both', expand=True, padx=3, pady=3)
+        self.xScrollbar.config(command=self.chatList.xview)
+        self.yScrollbar.config(command=self.chatList.yview)
+        
+
+        self.messageFrame = Frame(self.window)        
         self.messageFrame.pack(side='bottom', fill='x')
 
-        self.chatList.pack(side='left', fill='both', expand=True, padx=3, pady=3)
+        self.messageEntry = Entry(self.messageFrame)
         self.messageEntry.pack(side='left', fill='x', expand=True, padx=3, pady=3)
+        self.messageEntry.bind('<Return>', self.sendMsgEvent)
+        self.messageEntry.focus()
+
+        self.messageButton = Button(self.messageFrame, width=10, text='전송', command=self.sendMsg)
         self.messageButton.pack(side='right', fill='x', padx=3, pady=3)
 
-        self.messageEntry.focus()
-        self.messageEntry.bind('<Return>', self.sendMsgEvent)
 
 
     def sendMsg(self):
